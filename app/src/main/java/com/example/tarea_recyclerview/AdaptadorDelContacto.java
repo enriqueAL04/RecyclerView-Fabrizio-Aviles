@@ -6,42 +6,52 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
 
 public class AdaptadorDelContacto extends RecyclerView.Adapter<AdaptadorDelContacto.ContactoViewHolder> {
 
-    // lista de contactos y el contexto de la actividad
+    // lista de contactos y contexto de la aplicacion
     private final List<BaseContacto> contactos;
     private final Context context;
 
-    // constructor de contexto y contactos
-    public AdaptadorDelContacto(Context context, List<BaseContacto> contactos) {
-        this.context = context;
-        this.contactos = contactos;
+    // interfaz para manejar clics
+    public interface OnItemClickListener {
+        void onItemClick(BaseContacto contacto, int position);
     }
 
-    // crear un nuevo ViewHolder (item de la lista)
+    private final OnItemClickListener listener;
+
+    public AdaptadorDelContacto(Context context, List<BaseContacto> contactos, OnItemClickListener listener) {
+        this.context = context;
+        this.contactos = contactos;
+        this.listener = listener;
+    }
+
     @NonNull
     @Override
     public ContactoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // infla (carga) el layout del item (item_contacto) en un objeto View
         View view = LayoutInflater.from(context).inflate(R.layout.item_contacto, parent, false);
-        // crea y retorna un nuevo ContactoViewHolder que representa un item de la lista
         return new ContactoViewHolder(view);
     }
 
-    // asigna los datos al ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ContactoViewHolder holder, int position) {
-        // obtiene el contacto en la posicion actual
         BaseContacto contacto = contactos.get(position);
-        // asigna los valores del contacto a los campos del ViewHolder
         holder.nombre.setText(contacto.getNombre() + " " + contacto.getApellido());
         holder.email.setText(contacto.getEmail());
         holder.telefono.setText(contacto.getTelefono());
         holder.foto.setImageResource(contacto.getFoto());
+
+        // configura el evento clic para este elemento
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(contacto, position);
+            }
+        });
     }
 
     @Override
@@ -49,12 +59,11 @@ public class AdaptadorDelContacto extends RecyclerView.Adapter<AdaptadorDelConta
         return contactos.size();
     }
 
-    // clase que representa un item individual en el RecyclerView
+    // viewholder para almacenar vistas individuales
     public static class ContactoViewHolder extends RecyclerView.ViewHolder {
         ImageView foto;
         TextView nombre, email, telefono;
 
-        // constructor que inicializa las vistas del item a partir del layout
         public ContactoViewHolder(@NonNull View itemView) {
             super(itemView);
             foto = itemView.findViewById(R.id.contactoFoto);

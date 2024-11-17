@@ -1,11 +1,11 @@
 package com.example.tarea_recyclerview;
 
 public class BaseContacto {
-    private String nombre;
-    private String apellido;
-    private String email;
-    private String telefono;
-    private int foto;
+    private final String nombre;
+    private final String apellido;
+    private final String email;
+    private final String telefono;
+    private final int foto;
 
     public BaseContacto(String nombre, String apellido, String email, String telefono, int foto) {
         this.nombre = nombre;
